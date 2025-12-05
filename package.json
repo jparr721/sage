@@ -1,0 +1,28 @@
+{
+  "name": "sage",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/marked-terminal": "^6.1.1",
+    "@types/react": "^19.2.7",
+    "@types/uuid": "^11.0.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.90.12",
+    "axios": "^1.13.2",
+    "citty": "^0.1.6",
+    "ink": "^6.5.1",
+    "ink-select-input": "^6.2.0",
+    "ink-text-input": "^6.0.0",
+    "marked": "^17.0.1",
+    "marked-terminal": "^7.3.0",
+    "openai": "^6.10.0",
+    "react": "^19.2.1",
+    "uuid": "^13.0.0"
+  }
+}
