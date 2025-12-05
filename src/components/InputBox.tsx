@@ -1,5 +1,5 @@
-import { Box, Text } from 'ink';
-import TextInput from 'ink-text-input';
+import { Box, Text } from "ink";
+import TextInput from "ink-text-input";
 
 interface InputBoxProps {
   value: string;
@@ -22,7 +22,7 @@ export function InputBox({ value, onChange, onSubmit, disabled }: InputBoxProps)
         value={value}
         onChange={onChange}
         onSubmit={handleSubmit}
-        placeholder={disabled ? 'Waiting for response.' : 'Type your message.'}
+        placeholder={disabled ? "Waiting for response." : "Type your message."}
       />
     </Box>
   );

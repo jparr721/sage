@@ -1,1 +1,1 @@
-import './src/sage.tsx';
+import "./src/sage.tsx";

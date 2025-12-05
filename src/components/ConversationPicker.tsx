@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
-import { Box, Text } from 'ink';
-import SelectInput from 'ink-select-input';
-import { listConversations, loadConversation } from '../utils/storage';
-import { useConversation } from '../context/ConversationContext';
-import type { ConversationMeta } from '../types';
+import { Box, Text } from "ink";
+import SelectInput from "ink-select-input";
+import { useEffect, useState } from "react";
+import { useConversation } from "../context/ConversationContext";
+import type { ConversationMeta } from "../types";
+import { listConversations, loadConversation } from "../utils/storage";
 
 interface PickerProps {
   onSelected: () => void;
@@ -18,7 +18,7 @@ export function ConversationPicker({ onSelected }: PickerProps) {
   useEffect(() => {
     listConversations()
       .then(setConversations)
-      .catch(err => setError(err.message))
+      .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, []);
 
@@ -54,7 +54,7 @@ export function ConversationPicker({ onSelected }: PickerProps) {
     );
   }
 
-  const items = conversations.map(conv => ({
+  const items = conversations.map((conv) => ({
     label: `${conv.title} (${new Date(conv.updatedAt).toLocaleDateString()})`,
     value: conv.id,
   }));
@@ -62,7 +62,9 @@ export function ConversationPicker({ onSelected }: PickerProps) {
   return (
     <Box flexDirection="column" padding={1}>
       <Box marginBottom={1}>
-        <Text bold color="magenta">Sage</Text>
+        <Text bold color="magenta">
+          Sage
+        </Text>
         <Text dimColor> — Select a conversation</Text>
       </Box>
 

@@ -1,6 +1,6 @@
-import { createContext, useContext, useState, type ReactNode } from 'react';
-import { createNewConversation } from '../utils/storage';
-import type { Conversation } from '../types';
+import { createContext, type ReactNode, useContext, useState } from "react";
+import type { Conversation } from "../types";
+import { createNewConversation } from "../utils/storage";
 
 interface ConversationContextValue {
   conversation: Conversation;
@@ -26,7 +26,7 @@ export function ConversationProvider({ children }: ProviderProps) {
 export function useConversation(): ConversationContextValue {
   const context = useContext(ConversationContext);
   if (!context) {
-    throw new Error('useConversation must be used within a ConversationProvider');
+    throw new Error("useConversation must be used within a ConversationProvider");
   }
   return context;
 }

@@ -1,6 +1,6 @@
-import { Box, Static } from 'ink';
-import { Message } from './Message';
-import type { Message as MessageType } from '../types';
+import { Box, Static } from "ink";
+import type { Message as MessageType } from "../types";
+import { Message } from "./Message";
 
 interface Props {
   messages: MessageType[];
@@ -9,9 +9,7 @@ interface Props {
 export function MessageList({ messages }: Props) {
   return (
     <Box flexDirection="column" flexGrow={1}>
-      <Static items={messages}>
-        {(msg) => <Message key={msg.id} message={msg} />}
-      </Static>
+      <Static items={messages}>{(msg) => <Message key={msg.id} message={msg} />}</Static>
     </Box>
   );
 }

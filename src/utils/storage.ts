@@ -1,9 +1,9 @@
-import { homedir } from 'os';
-import { join } from 'path';
-import { v4 as uuidv4 } from 'uuid';
-import type { Conversation, ConversationMeta } from '../types';
+import { homedir } from "os";
+import { join } from "path";
+import { v4 as uuidv4 } from "uuid";
+import type { Conversation, ConversationMeta } from "../types";
 
-const STORAGE_DIR = join(homedir(), '.sage', 'conversations');
+const STORAGE_DIR = join(homedir(), ".sage", "conversations");
 
 async function ensureStorageDir(): Promise<void> {
   const dir = Bun.file(STORAGE_DIR);
@@ -29,7 +29,7 @@ export async function loadConversation(id: string): Promise<Conversation | null>
 
 export async function listConversations(): Promise<ConversationMeta[]> {
   await ensureStorageDir();
-  const glob = new Bun.Glob('*.json');
+  const glob = new Bun.Glob("*.json");
   const metas: ConversationMeta[] = [];
 
   for await (const filename of glob.scan(STORAGE_DIR)) {
@@ -52,7 +52,7 @@ export function createNewConversation(): Conversation {
   const now = Date.now();
   return {
     id: uuidv4(),
-    title: 'New conversation',
+    title: "New conversation",
     createdAt: now,
     updatedAt: now,
     messages: [],

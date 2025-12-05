@@ -1,7 +1,7 @@
-import { Box, Text } from 'ink';
-import { marked } from 'marked';
-import TerminalRenderer from 'marked-terminal';
-import type { Message as MessageType } from '../types';
+import { Box, Text } from "ink";
+import { marked } from "marked";
+import TerminalRenderer from "marked-terminal";
+import type { Message as MessageType } from "../types";
 
 marked.setOptions({
   renderer: new TerminalRenderer({
@@ -15,9 +15,9 @@ interface MessageProps {
 }
 
 export function Message({ message }: MessageProps) {
-  const isUser = message.role === 'user';
-  const roleLabel = isUser ? 'You' : 'Assistant';
-  const roleColor = isUser ? 'cyan' : 'green';
+  const isUser = message.role === "user";
+  const roleLabel = isUser ? "You" : "Assistant";
+  const roleColor = isUser ? "cyan" : "green";
 
   const renderedContent = marked.parse(message.content, { async: false }) as string;
 

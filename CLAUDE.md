@@ -60,6 +60,9 @@ src/
 
 ## Code Style
 
+### Coding
+You should always make sure you carefully review other sources of the same code. This ensures that we are not re-inventing anything. You should focus on changes that are repeatable and concise, choosing clarity above all else.
+
 ### Functional Programming
 
 - **One function per file** - Each exported function should live in its own file. Name the file after the function.
