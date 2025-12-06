@@ -1,4 +1,4 @@
-import { bash, listFiles, readFile } from "./index";
+import { bash, grep, listFiles, readFile } from "./index";
 
 type ToolArgs = Record<string, unknown>;
 
@@ -6,6 +6,7 @@ const toolMap: Record<string, (args: ToolArgs) => Promise<string>> = {
   readFile: (args) => readFile(args.filename as string),
   listFiles: (args) => listFiles(args.path as string | undefined),
   bash: (args) => bash(args.command as string),
+  grep: (args) => grep(args.pattern as string, args.caseSensitive, args.path, args.fileType),
 };
 
 export async function executeTool(name: string, args: ToolArgs): Promise<string> {

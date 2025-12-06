@@ -48,17 +48,23 @@ function ToolResultDisplay({ result }: { result: MessageType }) {
 export function Message({ message }: MessageProps) {
   const isUser = message.role === "user";
   const isSystem = message.role === "system";
-  const isTool = message.role === "tool";
+  const isToolResult = message.role === "tool" && message.tool_name;
+  const toolCalls = message.tool_calls ?? [];
+  const isAssistantWithTools = message.role === "assistant" && toolCalls.length > 0;
+
   const roleLabel = isUser ? "You" : "Assistant";
   const roleColor = isUser ? "cyan" : "green";
+
+  if (isSystem) return null;
+
+  // Tool result messages - just show the result, no header
+  if (isToolResult) {
+    return <ToolResultDisplay result={message} />;
+  }
 
   const renderedContent = marked.parse(message.content, {
     async: false,
   }) as string;
-
-  const toolCalls = message.tool_calls ?? [];
-
-  if (isSystem) return;
 
   return (
     <Box flexDirection="column" marginBottom={1}>
@@ -66,19 +72,16 @@ export function Message({ message }: MessageProps) {
         {roleLabel}
       </Text>
 
-      {isTool && (
+      {isAssistantWithTools && (
         <Box flexDirection="column" marginLeft={2}>
           {toolCalls.map((tc, i) => (
             // biome-ignore lint/suspicious/noArrayIndexKey: Doesn't matter
-            <Box key={i} flexDirection="column">
-              <ToolCallDisplay toolCall={tc} />
-              <ToolResultDisplay result={message} />
-            </Box>
+            <ToolCallDisplay key={i} toolCall={tc} />
           ))}
         </Box>
       )}
 
-      {message.content && (
+      {message.content && !isAssistantWithTools && (
         <Box marginLeft={2}>
           <Text>{renderedContent.trim()}</Text>
         </Box>

@@ -15,20 +15,53 @@ export async function readFile(filename: string): Promise<string> {
   }
 }
 
-export async function listFiles(path?: string): Promise<string> {
-  try {
-    return Bun.$`ls -al ${path ?? "."}`.text();
-  } catch (e) {
-    return `Failed to run listFiles on path ${path} with error ${e}`;
+export function listFiles(path?: string): string {
+  const result = Bun.spawnSync(["ls", "-al", path ?? "."]);
+  if (result.exitCode === 0) {
+    return result.stdout.toString();
   }
+  return `listFiles failed with exit code ${result.exitCode}: ${result.stderr.toString()}`;
 }
 
-export async function bash(command: string): Promise<string> {
-  try {
-    return Bun.$`sh -c ${command}`.text();
-  } catch (e) {
-    return `Failed to run bash command ${command} with error ${e}`;
+export function bash(command: string): string {
+  const result = Bun.spawnSync(["sh", "-c", command]);
+  if (result.exitCode === 0) {
+    return result.stdout.toString();
   }
+  return `Command failed with exit code ${result.exitCode}: ${result.stderr.toString()}`;
+}
+
+export async function grep(
+  pattern: string,
+  caseSensitive: boolean,
+  path?: string,
+  fileType?: string,
+): Promise<string> {
+  if (pattern === "") {
+    return "grep failed: pattern is required";
+  }
+
+  const cmd = ["rg", "--line-number", "--with-filename", "--color=never"];
+
+  if (fileType) {
+    cmd.push("--type", fileType);
+  }
+
+  if (!caseSensitive) {
+    cmd.push("--ignore-case");
+  }
+
+  cmd.push(pattern);
+  cmd.push(path ?? ".");
+
+  const result = Bun.spawnSync(cmd);
+  if (result.exitCode === 0) {
+    return result.stdout.toString();
+  }
+  if (result.exitCode === 1) {
+    return "No matches found.";
+  }
+  return `grep failed with exit code ${result.exitCode}: ${result.stderr.toString()}`;
 }
 
 const tools = [
@@ -80,6 +113,35 @@ const tools = [
           command: {
             type: "string",
             description: "The bash command to execute.",
+          },
+        },
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "grep",
+      description: "Search for patterns using ripgrep (rg). Use this to find code patterns, log entries, or any text in any directory/codebase. You can search by pattery, file type, or directory.",
+      parameters: {
+        type: "object",
+        required: ["pattern"],
+        properties: {
+          pattern: {
+            type: "string",
+            description: "The search pattern or regex to look for (default: current working directory).",
+          },
+          path: {
+            type: "string",
+            description: "Optional path to search in (file or directory).",
+          },
+          fileType: {
+            type: "string",
+            description: "Optional file extension to limit search to (e.g. 'go', 'js', 'log').",
+          },
+          caseSensitive: {
+            type: "boolean",
+            description: "Whether the search should be case sensitive (default: false).",
           },
         },
       },

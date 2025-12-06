@@ -34,12 +34,12 @@ export function useChat() {
           content: m.content,
         }));
 
-        // TODO: Less stupid updater
-        const newMessages = await chat(apiMessages);
-        setConversation((prev) => {
-          const newConv = { ...prev, messages: newMessages };
-          saveConversation(newConv);
-          return newConv;
+        await chat(apiMessages, (updatedMessages) => {
+          setConversation((prev) => {
+            const newConv = { ...prev, messages: updatedMessages, updatedAt: Date.now() };
+            saveConversation(newConv);
+            return newConv;
+          });
         });
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to get response");

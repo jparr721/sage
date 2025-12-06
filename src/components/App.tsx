@@ -20,6 +20,16 @@ export function App({ resumeMode = false }: AppProps) {
   const [pickerDone, setPickerDone] = useState(false);
   const [commandIndex, setCommandIndex] = useState(0);
   const { messages, isLoading, error, sendMessage } = useChat();
+  const [thinkingSeconds, setThinkingSeconds] = useState(0);
+
+  useEffect(() => {
+    if (!isLoading) {
+      setThinkingSeconds(0);
+      return;
+    }
+    const interval = setInterval(() => setThinkingSeconds((s) => s + 1), 1000);
+    return () => clearInterval(interval);
+  }, [isLoading]);
 
   const showCommandPicker = input.startsWith("/");
   const filteredCommands = showCommandPicker ? filterCommands(getCommands(), input) : [];
@@ -82,7 +92,7 @@ export function App({ resumeMode = false }: AppProps) {
 
       {isLoading && (
         <Box marginY={1}>
-          <Text color="yellow">Thinking...</Text>
+          <Text color="yellow">Thinking for {thinkingSeconds}s...</Text>
         </Box>
       )}
 
