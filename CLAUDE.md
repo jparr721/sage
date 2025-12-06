@@ -33,7 +33,7 @@ src/
 ├── hooks/
 │   └── useChat.ts            # Chat actions, API calls, persistence
 ├── queries/
-│   └── chat.ts               # OpenAI SDK client (Ollama @ 127.0.0.1:11434)
+│   └── chat.ts               # Ollama SDK client (127.0.0.1:11434)
 ├── types/
 │   └── index.ts              # Message, Conversation, ConversationMeta types
 └── utils/
@@ -53,7 +53,7 @@ src/
 
 - **Ink** - React renderer for interactive CLI apps
 - **citty** - CLI argument parsing
-- **OpenAI SDK** - Chat completions API (pointed at Ollama, model: `gpt-oss:20b`)
+- **Ollama SDK** - Native Ollama API (model: `ministral-3:3b`)
 - **ink-select-input** - Conversation picker UI
 - **marked + marked-terminal** - Markdown rendering in terminal
 - **uuid** - Conversation/message IDs

@@ -1,20 +1,44 @@
-import OpenAI from "openai";
-import type { ChatCompletion } from "openai/resources";
+import type { Message } from "ollama";
+import ollama from "ollama";
 import tools from "../tools";
+import { executeTool } from "../tools/executeTool";
+import type { ToolCall, ToolResult } from "../types";
 
-export async function chat(
-  messages: OpenAI.ChatCompletionMessageParam[] = [],
-): Promise<ChatCompletion> {
-  const client = new OpenAI({
-    apiKey: "ollama",
-    baseURL: "http://127.0.0.1:11434/v1/",
-  });
+export interface AgentState {
+  content: string;
+  toolCalls: ToolCall[];
+  toolResults: ToolResult[];
+  done: boolean;
+}
 
-  const completion = await client.chat.completions.create({
-    model: "gpt-oss:20b",
-    messages,
-    tools,
-  });
+export async function chat(messages: Message[]): Promise<Message[]> {
+  const conversationMessages: Message[] = [...messages];
 
-  return completion;
+  while (true) {
+    const response = await ollama.chat({
+      model: "qwen3",
+      messages: conversationMessages,
+      tools,
+      think: false,
+    });
+    const { message } = response;
+    const { tool_calls: toolCalls } = message;
+
+    conversationMessages.push(message);
+
+    if (toolCalls) {
+      for (const call of toolCalls) {
+        const result = await executeTool(call.function.name, call.function.arguments);
+        conversationMessages.push({
+          role: "tool",
+          content: String(result),
+          tool_name: call.function.name,
+        });
+      }
+    } else {
+      break;
+    }
+  }
+
+  return conversationMessages;
 }

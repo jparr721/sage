@@ -1,7 +1,8 @@
-import { homedir } from "os";
-import { join } from "path";
+import { homedir } from "node:os";
+import { join } from "node:path";
 import { v4 as uuidv4 } from "uuid";
 import type { Conversation, ConversationMeta } from "../types";
+import SYSTEM_PROMPT from "./systemPrompt";
 
 const STORAGE_DIR = join(homedir(), ".sage", "conversations");
 
@@ -55,6 +56,11 @@ export function createNewConversation(): Conversation {
     title: "New conversation",
     createdAt: now,
     updatedAt: now,
-    messages: [],
+    messages: [
+      {
+        role: "system",
+        content: SYSTEM_PROMPT,
+      },
+    ],
   };
 }

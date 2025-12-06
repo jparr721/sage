@@ -1,8 +1,15 @@
-export interface Message {
+import type { Message } from 'ollama';
+
+export interface ToolCall {
   id: string;
-  role: "user" | "assistant" | "system";
-  content: string;
-  timestamp: number;
+  name: string;
+  arguments: string;
+}
+
+export interface ToolResult {
+  toolCallId: string;
+  name: string;
+  result: string;
 }
 
 export interface Conversation {

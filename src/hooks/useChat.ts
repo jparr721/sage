@@ -1,8 +1,7 @@
+import type { Message } from "ollama";
 import { useCallback, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import { useConversation } from "../context/ConversationContext";
 import { chat } from "../queries/chat";
-import type { Message } from "../types";
 import { saveConversation } from "../utils/storage";
 
 export function useChat() {
@@ -15,10 +14,8 @@ export function useChat() {
   const sendMessage = useCallback(
     async (content: string) => {
       const userMessage: Message = {
-        id: uuidv4(),
         role: "user",
         content,
-        timestamp: Date.now(),
       };
 
       setConversation((prev) => ({
@@ -33,28 +30,16 @@ export function useChat() {
 
       try {
         const apiMessages = [...messages, userMessage].map((m) => ({
-          role: m.role as "user" | "assistant" | "system",
+          role: m.role,
           content: m.content,
         }));
 
-        const response = await chat(apiMessages);
-        const assistantContent = response.choices[0]?.message?.content ?? "";
-
-        const assistantMessage: Message = {
-          id: uuidv4(),
-          role: "assistant",
-          content: assistantContent,
-          timestamp: Date.now(),
-        };
-
+        // TODO: Less stupid updater
+        const newMessages = await chat(apiMessages);
         setConversation((prev) => {
-          const updated = {
-            ...prev,
-            messages: [...prev.messages, assistantMessage],
-            updatedAt: Date.now(),
-          };
-          saveConversation(updated);
-          return updated;
+          const newConv = { ...prev, messages: newMessages };
+          saveConversation(newConv);
+          return newConv;
         });
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to get response");

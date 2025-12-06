@@ -1,7 +1,6 @@
 import { Box, Text, useInput } from "ink";
 import { useEffect, useState } from "react";
 import { getCommands } from "../commands";
-import { useConversation } from "../context/ConversationContext";
 import { useChat } from "../hooks/useChat";
 import { filterCommands } from "../utils/filterCommands";
 import { CommandPicker } from "./CommandPicker";
@@ -9,8 +8,8 @@ import { ConversationPicker } from "./ConversationPicker";
 import { InputBox } from "./InputBox";
 import { MessageList } from "./MessageList";
 
-import "../commands/refreshCommand";
-import "../commands/exitCommand";
+import "../commands/refresh";
+import "../commands/exit";
 
 interface AppProps {
   resumeMode?: boolean;
@@ -20,7 +19,6 @@ export function App({ resumeMode = false }: AppProps) {
   const [input, setInput] = useState("");
   const [pickerDone, setPickerDone] = useState(false);
   const [commandIndex, setCommandIndex] = useState(0);
-  const { conversation } = useConversation();
   const { messages, isLoading, error, sendMessage } = useChat();
 
   const showCommandPicker = input.startsWith("/");
@@ -28,10 +26,10 @@ export function App({ resumeMode = false }: AppProps) {
 
   useEffect(() => {
     setCommandIndex(0);
-  }, [input]);
+  }, []);
 
   useInput(
-    (char, key) => {
+    (_, key) => {
       if (key.escape) {
         setInput("");
         return;
@@ -72,7 +70,7 @@ export function App({ resumeMode = false }: AppProps) {
     setInput("");
   };
 
-  const showPicker = resumeMode && !pickerDone && conversation.messages.length === 0;
+  const showPicker = resumeMode && !pickerDone;
 
   if (showPicker) {
     return <ConversationPicker onSelected={() => setPickerDone(true)} />;
