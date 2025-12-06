@@ -24,9 +24,11 @@ export async function chat(messages: Message[]): Promise<Message[]> {
     const { message } = response;
     const { tool_calls: toolCalls } = message;
 
-    conversationMessages.push(message);
-
     if (toolCalls) {
+      // This is a tool call message, so quickly extract the relevant details for use later.
+      // We mark this as a tool here instead of assistant since it just stores the function
+      // calls and no other content (I think).
+      conversationMessages.push({ ...message, role: 'tool' });
       for (const call of toolCalls) {
         const result = await executeTool(call.function.name, call.function.arguments);
         conversationMessages.push({
@@ -36,6 +38,8 @@ export async function chat(messages: Message[]): Promise<Message[]> {
         });
       }
     } else {
+      // This is a non tool-call message (the content for those is empty), so append.
+      conversationMessages.push(message);
       break;
     }
   }

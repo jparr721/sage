@@ -49,6 +49,19 @@ export async function listConversations(): Promise<ConversationMeta[]> {
   return metas.sort((a, b) => b.updatedAt - a.updatedAt);
 }
 
+export async function deleteAllConversations() {
+  const glob = new Bun.Glob("*.json");
+  let deleted = 0;
+  for await (const filename of glob.scan(STORAGE_DIR)) {
+    const path = join(STORAGE_DIR, filename);
+    const file = Bun.file(path);
+    console.log(`Deleting ${file.name}`);
+    await file.delete();
+    deleted += 1;
+  }
+  console.log(`Deleted ${deleted} files`);
+}
+
 export function createNewConversation(): Conversation {
   const now = Date.now();
   return {

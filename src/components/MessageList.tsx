@@ -1,15 +1,15 @@
 import { Box, Static } from "ink";
-import type { SageMessage } from "../types/index.ts";
+import type { Message as Msg } from "ollama";
 import { Message } from "./Message";
 
 interface Props {
-  messages: SageMessage[];
+  messages: Msg[];
 }
 
 export function MessageList({ messages }: Props) {
   return (
     <Box flexDirection="column" flexGrow={1}>
-      <Static items={messages}>{(msg) => <Message key={msg.id} message={msg} />}</Static>
+      <Static items={messages}>{(msg, i) => <Message key={i} message={msg} />}</Static>
     </Box>
   );
 }

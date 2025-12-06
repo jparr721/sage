@@ -1,7 +1,7 @@
 import { Box, Text } from "ink";
 import { marked } from "marked";
 import TerminalRenderer from "marked-terminal";
-import type { Message as MessageType, ToolCall, ToolResult } from "../types";
+import type { Message as MessageType, ToolCall } from "ollama";
 
 marked.setOptions({
   renderer: new TerminalRenderer({
@@ -18,15 +18,16 @@ function ToolCallDisplay({ toolCall }: { toolCall: ToolCall }) {
   return (
     <Box flexDirection="column" borderStyle="round" borderColor="yellow" paddingX={1} marginY={1}>
       <Text bold color="yellow">
-        {toolCall.name}
+        {toolCall.function.name}
       </Text>
-      <Text dimColor>{toolCall.arguments}</Text>
+      <Text dimColor>{JSON.stringify(toolCall.function.arguments)}</Text>
     </Box>
   );
 }
 
-function ToolResultDisplay({ result }: { result: ToolResult }) {
-  const preview = result.result.length > 200 ? `${result.result.slice(0, 200)}...` : result.result;
+function ToolResultDisplay({ result }: { result: MessageType }) {
+  const preview =
+    result.content.length > 200 ? `${result.content.slice(0, 200)}...` : result.content;
 
   return (
     <Box
@@ -37,7 +38,7 @@ function ToolResultDisplay({ result }: { result: ToolResult }) {
       marginBottom={1}
     >
       <Text dimColor italic>
-        {result.name} result:
+        Tool {result.tool_name} result:
       </Text>
       <Text dimColor>{preview}</Text>
     </Box>
@@ -47,6 +48,7 @@ function ToolResultDisplay({ result }: { result: ToolResult }) {
 export function Message({ message }: MessageProps) {
   const isUser = message.role === "user";
   const isSystem = message.role === "system";
+  const isTool = message.role === "tool";
   const roleLabel = isUser ? "You" : "Assistant";
   const roleColor = isUser ? "cyan" : "green";
 
@@ -54,8 +56,7 @@ export function Message({ message }: MessageProps) {
     async: false,
   }) as string;
 
-  const toolCalls = message.toolCalls ?? [];
-  const toolResults = message.toolResults ?? [];
+  const toolCalls = message.tool_calls ?? [];
 
   if (isSystem) return;
 
@@ -65,12 +66,13 @@ export function Message({ message }: MessageProps) {
         {roleLabel}
       </Text>
 
-      {toolCalls.length > 0 && (
+      {isTool && (
         <Box flexDirection="column" marginLeft={2}>
           {toolCalls.map((tc, i) => (
-            <Box key={tc.id} flexDirection="column">
+            // biome-ignore lint/suspicious/noArrayIndexKey: Doesn't matter
+            <Box key={i} flexDirection="column">
               <ToolCallDisplay toolCall={tc} />
-              {toolResults[i] && <ToolResultDisplay result={toolResults[i]} />}
+              <ToolResultDisplay result={message} />
             </Box>
           ))}
         </Box>

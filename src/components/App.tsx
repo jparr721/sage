@@ -8,8 +8,8 @@ import { ConversationPicker } from "./ConversationPicker";
 import { InputBox } from "./InputBox";
 import { MessageList } from "./MessageList";
 
-import "../commands/refresh";
-import "../commands/exit";
+import "../commands/refresh.ts";
+import "../commands/exit.ts";
 
 interface AppProps {
   resumeMode?: boolean;
